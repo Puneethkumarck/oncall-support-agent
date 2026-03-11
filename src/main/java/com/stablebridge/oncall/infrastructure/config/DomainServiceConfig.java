@@ -2,6 +2,7 @@ package com.stablebridge.oncall.infrastructure.config;
 
 import com.stablebridge.oncall.domain.service.HealthCardFormatter;
 import com.stablebridge.oncall.domain.service.PostMortemFormatter;
+import com.stablebridge.oncall.domain.service.SLOReportFormatter;
 import com.stablebridge.oncall.domain.service.TimelineBuilder;
 import com.stablebridge.oncall.domain.service.TriageReportFormatter;
 import org.springframework.context.annotation.Bean;
@@ -28,5 +29,10 @@ class DomainServiceConfig {
     @Bean
     TimelineBuilder timelineBuilder() {
         return new TimelineBuilder();
+    }
+
+    @Bean
+    SLOReportFormatter sloReportFormatter() {
+        return new SLOReportFormatter();
     }
 }
