@@ -1,5 +1,6 @@
 package com.stablebridge.oncall.infrastructure.config;
 
+import com.stablebridge.oncall.domain.service.AlertFatigueReportFormatter;
 import com.stablebridge.oncall.domain.service.DeployImpactReportFormatter;
 import com.stablebridge.oncall.domain.service.HealthCardFormatter;
 import com.stablebridge.oncall.domain.service.LogAnalysisReportFormatter;
@@ -13,6 +14,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 class DomainServiceConfig {
+
+    @Bean
+    AlertFatigueReportFormatter alertFatigueReportFormatter() {
+        return new AlertFatigueReportFormatter();
+    }
 
     @Bean
     DeployImpactReportFormatter deployImpactReportFormatter() {
