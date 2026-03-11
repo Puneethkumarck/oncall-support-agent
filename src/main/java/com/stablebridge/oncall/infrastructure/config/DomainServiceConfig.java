@@ -1,6 +1,7 @@
 package com.stablebridge.oncall.infrastructure.config;
 
 import com.stablebridge.oncall.domain.service.HealthCardFormatter;
+import com.stablebridge.oncall.domain.service.LogAnalysisReportFormatter;
 import com.stablebridge.oncall.domain.service.PostMortemFormatter;
 import com.stablebridge.oncall.domain.service.TimelineBuilder;
 import com.stablebridge.oncall.domain.service.TriageReportFormatter;
@@ -13,6 +14,11 @@ class DomainServiceConfig {
     @Bean
     HealthCardFormatter healthCardFormatter() {
         return new HealthCardFormatter();
+    }
+
+    @Bean
+    LogAnalysisReportFormatter logAnalysisReportFormatter() {
+        return new LogAnalysisReportFormatter();
     }
 
     @Bean
