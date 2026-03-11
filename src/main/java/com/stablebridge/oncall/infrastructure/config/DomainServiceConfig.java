@@ -6,6 +6,7 @@ import com.stablebridge.oncall.domain.service.LogAnalysisReportFormatter;
 import com.stablebridge.oncall.domain.service.PostMortemFormatter;
 import com.stablebridge.oncall.domain.service.SLOReportFormatter;
 import com.stablebridge.oncall.domain.service.TimelineBuilder;
+import com.stablebridge.oncall.domain.service.TraceAnalysisReportFormatter;
 import com.stablebridge.oncall.domain.service.TriageReportFormatter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,5 +47,10 @@ class DomainServiceConfig {
     @Bean
     SLOReportFormatter sloReportFormatter() {
         return new SLOReportFormatter();
+    }
+
+    @Bean
+    TraceAnalysisReportFormatter traceAnalysisReportFormatter() {
+        return new TraceAnalysisReportFormatter();
     }
 }
