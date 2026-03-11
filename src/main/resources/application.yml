@@ -1,0 +1,42 @@
+app:
+  services:
+    loki:
+      base-url: ${LOKI_URL:http://localhost:3100}
+      enabled: false
+    prometheus:
+      base-url: ${PROMETHEUS_URL:http://localhost:9090}
+      enabled: false
+    tempo:
+      base-url: ${TEMPO_URL:http://localhost:3200}
+      enabled: false
+    grafana:
+      base-url: ${GRAFANA_URL:http://localhost:3000}
+      api-key: ${GRAFANA_API_KEY:}
+      enabled: false
+    argocd:
+      base-url: ${ARGOCD_URL:http://localhost:8080}
+      auth-token: ${ARGOCD_AUTH_TOKEN:}
+      enabled: false
+    pagerduty:
+      base-url: https://api.pagerduty.com
+      api-key: ${PAGERDUTY_API_KEY:}
+      enabled: false
+    slack:
+      webhook-url: ${SLACK_WEBHOOK_URL:}
+      enabled: false
+
+spring:
+  application:
+    name: oncall-support-agent
+  main:
+    web-application-type: reactive
+  shell:
+    interactive:
+      enabled: true
+
+embabel:
+  models:
+    default-llm: llama3.2:latest
+  agent:
+    shell:
+      web-application-type: reactive

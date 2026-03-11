@@ -1,0 +1,16 @@
+package com.stablebridge.oncall.domain.model.common;
+
+public enum FindingCategory {
+    DEPLOY_REGRESSION,
+    INFRASTRUCTURE_ISSUE,
+    RESOURCE_EXHAUSTION,
+    DEPENDENCY_FAILURE,
+    CONFIGURATION_DRIFT,
+    SECURITY_ANOMALY,
+    CAPACITY_WARNING,
+    DATA_INCONSISTENCY,
+    CERTIFICATE_EXPIRY,
+    DNS_ISSUE,
+    NETWORK_PARTITION,
+    THROTTLING
+}

@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+*.env.local
+
+# State/context files (local only, never commit)
+IMPLEMENTATION_STATE.md
+IMPLEMENTATION_STATE.json
+**/CONTEXT.md
+tasks/
+oncall-support-agent.log
