@@ -1,6 +1,6 @@
 package com.stablebridge.oncall.shell;
 
-import com.embabel.agent.api.common.AgentPlatform;
+import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.domain.io.UserInput;
 import com.stablebridge.oncall.agent.deploy.DeployImpactAgent;
 import com.stablebridge.oncall.agent.fatigue.AlertFatigueAgent;
