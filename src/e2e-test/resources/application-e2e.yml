@@ -1,0 +1,10 @@
+app:
+  services:
+    prometheus:
+      enabled: true
+    loki:
+      enabled: true
+    tempo:
+      enabled: true
+    grafana:
+      enabled: true

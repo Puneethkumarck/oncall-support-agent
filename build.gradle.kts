@@ -31,11 +31,25 @@ val integrationTestSourceSet: SourceSet = sourceSets.create("integrationTest") {
     runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
 }
 
+// E2E test source set (runs against live price-alert observability stack)
+val e2eTestSourceSet: SourceSet = sourceSets.create("e2eTest") {
+    java.srcDir("src/e2e-test/java")
+    resources.srcDir("src/e2e-test/resources")
+    compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+    runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+}
+
 configurations {
     named("integrationTestImplementation") {
         extendsFrom(configurations.testImplementation.get())
     }
     named("integrationTestRuntimeOnly") {
+        extendsFrom(configurations.testRuntimeOnly.get())
+    }
+    named("e2eTestImplementation") {
+        extendsFrom(configurations.testImplementation.get())
+    }
+    named("e2eTestRuntimeOnly") {
         extendsFrom(configurations.testRuntimeOnly.get())
     }
 }
@@ -44,6 +58,15 @@ tasks.register<Test>("integrationTest") {
     testClassesDirs = integrationTestSourceSet.output.classesDirs
     classpath = integrationTestSourceSet.runtimeClasspath
     shouldRunAfter(tasks.test)
+    configure<JacocoTaskExtension> { isEnabled = false }
+}
+
+tasks.register<Test>("e2eTest") {
+    description = "Runs E2E tests against live price-alert observability stack"
+    group = "verification"
+    testClassesDirs = e2eTestSourceSet.output.classesDirs
+    classpath = e2eTestSourceSet.runtimeClasspath
+    shouldRunAfter(tasks.named("integrationTest"))
     configure<JacocoTaskExtension> { isEnabled = false }
 }
 
@@ -80,6 +103,10 @@ dependencies {
     // Integration test
     "integrationTestImplementation"(testFixtures(project))
     "integrationTestImplementation"("com.embabel.agent:embabel-agent-test:$embabelVersion")
+
+    // E2E test
+    "e2eTestImplementation"(testFixtures(project))
+    "e2eTestImplementation"("com.embabel.agent:embabel-agent-test:$embabelVersion")
 }
 
 spotless {
