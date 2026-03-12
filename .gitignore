@@ -30,6 +30,7 @@ oncall-support-agent.log
 
 # Claude Code
 .claude/
+CLAUDE.md
 
 # Specs (large, not source code)
 services/
