@@ -33,7 +33,6 @@ spring:
   shell:
     interactive:
       enabled: true
-
 embabel:
   models:
     default-llm: llama3.2:latest

@@ -1,0 +1,51 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/api/v1/applications/.*"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": ["response-template"],
+    "jsonBody": {
+      "metadata": {
+        "name": "{{request.pathSegments.[3]}}"
+      },
+      "status": {
+        "sync": {
+          "status": "Synced",
+          "revision": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+        },
+        "health": {
+          "status": "Healthy"
+        },
+        "operationState": {
+          "finishedAt": "2026-03-11T08:30:00Z"
+        },
+        "summary": {
+          "images": ["{{request.pathSegments.[3]}}:v2.1.0"]
+        },
+        "history": [
+          {
+            "id": 1,
+            "revision": "prev-rev-001",
+            "deployedAt": "2026-03-09T14:00:00Z"
+          },
+          {
+            "id": 2,
+            "revision": "prev-rev-002",
+            "deployedAt": "2026-03-10T10:00:00Z"
+          },
+          {
+            "id": 3,
+            "revision": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+            "deployedAt": "2026-03-11T08:30:00Z"
+          }
+        ]
+      }
+    }
+  }
+}

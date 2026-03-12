@@ -69,7 +69,7 @@ class LokiAdapter implements LogSearchProvider {
                             .bodyToMono(JsonNode.class)
                             .block();
         } catch (WebClientResponseException e) {
-            if (e.getStatusCode().is4xxClientError()) {
+            if (e.getStatusCode().is4xxClientError() || e.getStatusCode().is2xxSuccessful()) {
                 log.warn(
                         "Loki returned {} — returning empty list",
                         e.getStatusCode().value());
@@ -88,7 +88,7 @@ class LokiAdapter implements LogSearchProvider {
 
     private String buildLogqlQuery(String service, String severityFilter) {
         StringBuilder query = new StringBuilder();
-        query.append("{app=\"").append(service).append("\"}");
+        query.append("{container=~\".*").append(service).append(".*\"}");
         if (severityFilter != null && !severityFilter.isBlank()) {
             query.append(" |~ \"(?i)").append(severityFilter).append("\"");
         }

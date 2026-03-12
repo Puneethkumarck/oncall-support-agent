@@ -1,0 +1,11 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "POST",
+    "urlPath": "/"
+  },
+  "response": {
+    "status": 200,
+    "body": "ok"
+  }
+}

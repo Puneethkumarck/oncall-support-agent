@@ -1,0 +1,19 @@
+{
+  "priority": 5,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/api/v1/applications/.*/revisions/.*/metadata"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "author": "sre-engineer@stablebridge.com",
+      "date": "2026-03-11T08:30:00Z",
+      "message": "fix: increase evaluator heap to 512m and tune GC",
+      "signatureInfo": ""
+    }
+  }
+}

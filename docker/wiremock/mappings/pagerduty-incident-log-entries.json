@@ -1,0 +1,52 @@
+{
+  "priority": 5,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/incidents/.*/log_entries"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "log_entries": [
+        {
+          "created_at": "2026-03-11T06:15:00Z",
+          "type": "trigger_log_entry",
+          "agent": {
+            "summary": "Prometheus Alertmanager"
+          }
+        },
+        {
+          "created_at": "2026-03-11T06:18:00Z",
+          "type": "acknowledge_log_entry",
+          "agent": {
+            "summary": "oncall-sre@stablebridge.com"
+          }
+        },
+        {
+          "created_at": "2026-03-11T06:25:00Z",
+          "type": "annotate_log_entry",
+          "agent": {
+            "summary": "oncall-sre@stablebridge.com"
+          }
+        },
+        {
+          "created_at": "2026-03-11T06:35:00Z",
+          "type": "annotate_log_entry",
+          "agent": {
+            "summary": "oncall-support-agent"
+          }
+        },
+        {
+          "created_at": "2026-03-11T06:45:00Z",
+          "type": "resolve_log_entry",
+          "agent": {
+            "summary": "oncall-sre@stablebridge.com"
+          }
+        }
+      ]
+    }
+  }
+}

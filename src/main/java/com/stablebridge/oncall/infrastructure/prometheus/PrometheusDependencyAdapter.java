@@ -15,12 +15,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 import tools.jackson.databind.JsonNode;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Component
@@ -38,7 +35,7 @@ class PrometheusDependencyAdapter implements DependencyGraphProvider {
         log.info("Fetching dependency graph for service: {}", service);
 
         var discoveryQuery =
-                "sum by (target_app) (rate(http_client_requests_seconds_count{app=\""
+                "sum by (target_app) (rate(http_client_requests_seconds_count{application=\""
                         + service
                         + "\"}[5m]))";
 
@@ -64,7 +61,7 @@ class PrometheusDependencyAdapter implements DependencyGraphProvider {
 
     private double fetchErrorRate(String dependency) {
         var query =
-                "rate(http_server_requests_seconds_count{app=\""
+                "rate(http_server_requests_seconds_count{application=\""
                         + dependency
                         + "\",status=~\"5..\"}[5m])";
         var result = queryInstant(query);
@@ -82,7 +79,7 @@ class PrometheusDependencyAdapter implements DependencyGraphProvider {
 
     private double fetchLatency(String dependency) {
         var query =
-                "histogram_quantile(0.99, rate(http_server_requests_seconds_bucket{app=\""
+                "histogram_quantile(0.99, rate(http_server_requests_seconds_bucket{application=\""
                         + dependency
                         + "\"}[5m]))";
         var result = queryInstant(query);
@@ -109,10 +106,12 @@ class PrometheusDependencyAdapter implements DependencyGraphProvider {
     }
 
     private JsonNode queryInstant(String promql) {
-        var encodedQuery = URLEncoder.encode(promql, UTF_8);
         return prometheusWebClient
                 .get()
-                .uri("/api/v1/query?query=" + encodedQuery)
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v1/query")
+                        .queryParam("query", "{query}")
+                        .build(promql))
                 .retrieve()
                 .onStatus(
                         HttpStatusCode::is5xxServerError,

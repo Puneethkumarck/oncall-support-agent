@@ -10,12 +10,12 @@ app:
       enabled: true
     argocd:
       base-url: ${ARGOCD_URL:http://localhost:30080}
-      auth-token: ${ARGOCD_AUTH_TOKEN:e2e-test-token}
+      auth-token: ${ARGOCD_AUTH_TOKEN}
       enabled: true
     pagerduty:
-      base-url: ${PAGERDUTY_URL:http://localhost:8101}
-      api-key: ${PAGERDUTY_API_KEY:e2e-test-key}
+      base-url: ${PAGERDUTY_URL:https://api.pagerduty.com}
+      api-key: ${PAGERDUTY_API_KEY}
       enabled: true
     slack:
-      webhook-url: ${SLACK_WEBHOOK_URL:http://localhost:8102}
+      webhook-url: ${SLACK_WEBHOOK_URL}
       enabled: true

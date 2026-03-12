@@ -1,0 +1,19 @@
+{
+  "priority": 5,
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/incidents/.*/notes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "note": {
+        "id": "NOTE-001",
+        "content": "Note added by oncall-support-agent"
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "priority": 5,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/incidents/[^/]+$"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": ["response-template"],
+    "jsonBody": {
+      "incident": {
+        "id": "{{request.pathSegments.[1]}}",
+        "service": {
+          "summary": "alert-api"
+        },
+        "urgency": "high",
+        "description": "High error rate on alert-api — 5xx rate exceeds 1% SLO threshold",
+        "created_at": "2026-03-11T09:45:00Z",
+        "html_url": "https://stablebridge.pagerduty.com/incidents/{{request.pathSegments.[1]}}",
+        "incident_key": "alert-api-high-error-rate-{{request.pathSegments.[1]}}"
+      }
+    }
+  }
+}

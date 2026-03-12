@@ -27,3 +27,9 @@ IMPLEMENTATION_STATE.json
 **/CONTEXT.md
 tasks/
 oncall-support-agent.log
+
+# Claude Code
+.claude/
+
+# Specs (large, not source code)
+services/

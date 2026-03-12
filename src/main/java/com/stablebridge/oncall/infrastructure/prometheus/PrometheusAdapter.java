@@ -16,12 +16,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import tools.jackson.databind.JsonNode;
 
-import java.net.URLEncoder;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Component
@@ -39,43 +36,43 @@ class PrometheusAdapter implements MetricsProvider {
         log.info("Fetching Prometheus metrics for service={} at={}", service, at);
 
         double errorRate = queryInstant(
-                "rate(http_server_requests_seconds_count{app=\""
+                "rate(http_server_requests_seconds_count{application=\""
                         + service
                         + "\",status=~\"5..\"}[5m])"
-                        + " / rate(http_server_requests_seconds_count{app=\""
+                        + " / rate(http_server_requests_seconds_count{application=\""
                         + service
                         + "\"}[5m])",
                 at);
 
         double latencyP50 = queryInstant(
-                "histogram_quantile(0.5, rate(http_server_requests_seconds_bucket{app=\""
+                "histogram_quantile(0.5, rate(http_server_requests_seconds_bucket{application=\""
                         + service
                         + "\"}[5m]))",
                 at);
 
         double latencyP95 = queryInstant(
-                "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{app=\""
+                "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{application=\""
                         + service
                         + "\"}[5m]))",
                 at);
 
         double latencyP99 = queryInstant(
-                "histogram_quantile(0.99, rate(http_server_requests_seconds_bucket{app=\""
+                "histogram_quantile(0.99, rate(http_server_requests_seconds_bucket{application=\""
                         + service
                         + "\"}[5m]))",
                 at);
 
         double throughput = queryInstant(
-                "sum(rate(http_server_requests_seconds_count{app=\"" + service + "\"}[5m]))", at);
+                "sum(rate(http_server_requests_seconds_count{application=\"" + service + "\"}[5m]))", at);
 
         double cpuPercent =
-                queryInstant("process_cpu_usage{app=\"" + service + "\"} * 100", at);
+                queryInstant("process_cpu_usage{application=\"" + service + "\"} * 100", at);
 
         double memoryPercent = queryInstant(
-                "jvm_memory_used_bytes{app=\""
+                "jvm_memory_used_bytes{application=\""
                         + service
                         + "\",area=\"heap\"}"
-                        + " / jvm_memory_max_bytes{app=\""
+                        + " / jvm_memory_max_bytes{application=\""
                         + service
                         + "\",area=\"heap\"} * 100",
                 at);
@@ -109,16 +106,16 @@ class PrometheusAdapter implements MetricsProvider {
         Instant now = Instant.now();
 
         double budgetRemaining = queryInstant(
-                "1 - (sum(rate(http_server_requests_seconds_count{app=\""
+                "1 - (sum(rate(http_server_requests_seconds_count{application=\""
                         + service
                         + "\",status=~\"5..\"}[30d]))"
-                        + " / sum(rate(http_server_requests_seconds_count{app=\""
+                        + " / sum(rate(http_server_requests_seconds_count{application=\""
                         + service
                         + "\"}[30d])))",
                 now);
 
         double burnRate = queryInstant(
-                "sum(rate(http_server_requests_seconds_count{app=\""
+                "sum(rate(http_server_requests_seconds_count{application=\""
                         + service
                         + "\",status=~\"5..\"}[1h]))"
                         + " / (1 - 0.999)",
@@ -147,7 +144,7 @@ class PrometheusAdapter implements MetricsProvider {
 
         Instant midpoint = Instant.ofEpochSecond((from.getEpochSecond() + to.getEpochSecond()) / 2);
 
-        String promql = "topk(5, sum by (uri) (rate(http_server_requests_seconds_count{app=\""
+        String promql = "topk(5, sum by (uri) (rate(http_server_requests_seconds_count{application=\""
                 + service
                 + "\",status=~\"5..\"}[5m])))";
 
@@ -160,7 +157,7 @@ class PrometheusAdapter implements MetricsProvider {
         log.info(
                 "Fetching burn history for service={} from={} to={}", service, from, to);
 
-        String promql = "sum(rate(http_server_requests_seconds_count{app=\""
+        String promql = "sum(rate(http_server_requests_seconds_count{application=\""
                 + service
                 + "\",status=~\"5..\"}[1h])) / (1 - 0.999)";
 
@@ -174,13 +171,14 @@ class PrometheusAdapter implements MetricsProvider {
     }
 
     private JsonNode queryRaw(String promql, Instant at) {
-        var encodedQuery = URLEncoder.encode(promql, UTF_8);
-        var path = "/api/v1/query?query=" + encodedQuery + "&time=" + at.getEpochSecond();
-
         try {
             return prometheusWebClient
                     .get()
-                    .uri(path)
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/api/v1/query")
+                            .queryParam("query", "{query}")
+                            .queryParam("time", "{time}")
+                            .build(promql, at.getEpochSecond()))
                     .retrieve()
                     .onStatus(
                             HttpStatusCode::is4xxClientError,
@@ -208,16 +206,16 @@ class PrometheusAdapter implements MetricsProvider {
     }
 
     private JsonNode queryRange(String promql, Instant from, Instant to, String step) {
-        var encodedQuery = URLEncoder.encode(promql, UTF_8);
-        var path = "/api/v1/query_range?query=" + encodedQuery
-                + "&start=" + from.getEpochSecond()
-                + "&end=" + to.getEpochSecond()
-                + "&step=" + step;
-
         try {
             return prometheusWebClient
                     .get()
-                    .uri(path)
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/api/v1/query_range")
+                            .queryParam("query", "{query}")
+                            .queryParam("start", "{start}")
+                            .queryParam("end", "{end}")
+                            .queryParam("step", "{step}")
+                            .build(promql, from.getEpochSecond(), to.getEpochSecond(), step))
                     .retrieve()
                     .onStatus(
                             HttpStatusCode::is4xxClientError,

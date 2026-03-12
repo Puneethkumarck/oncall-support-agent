@@ -1,0 +1,56 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "GET",
+    "urlPath": "/incidents",
+    "queryParameters": {
+      "service_ids[]": {
+        "matches": ".*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "incidents": [
+        {
+          "id": "INC-PA-001",
+          "description": "High error rate on alert-api — POST /api/v1/alerts returning 500",
+          "status": "resolved",
+          "created_at": "2026-03-11T06:15:00Z",
+          "last_status_change_at": "2026-03-11T06:45:00Z"
+        },
+        {
+          "id": "INC-PA-002",
+          "description": "Evaluator tick processing stalled — 0 ticks in 3 minutes",
+          "status": "resolved",
+          "created_at": "2026-03-10T22:30:00Z",
+          "last_status_change_at": "2026-03-10T22:55:00Z"
+        },
+        {
+          "id": "INC-PA-003",
+          "description": "SLO budget burn rate 14.4x — breach projected in 5 hours",
+          "status": "resolved",
+          "created_at": "2026-03-10T14:00:00Z",
+          "last_status_change_at": "2026-03-10T15:20:00Z"
+        },
+        {
+          "id": "INC-PA-004",
+          "description": "High CPU usage on tick-ingestor — 92% sustained",
+          "status": "resolved",
+          "created_at": "2026-03-10T08:00:00Z",
+          "last_status_change_at": "2026-03-10T08:12:00Z"
+        },
+        {
+          "id": "INC-PA-005",
+          "description": "Notification persister consumer lag spike — 15000 messages behind",
+          "status": "triggered",
+          "created_at": "2026-03-11T09:30:00Z"
+        }
+      ]
+    }
+  }
+}
