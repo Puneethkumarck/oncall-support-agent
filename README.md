@@ -438,4 +438,4 @@ Enforced by ArchUnit — these are compile-time validated:
 
 ## License
 
-Private — All rights reserved.
+This project is licensed under the [MIT License](LICENSE).
