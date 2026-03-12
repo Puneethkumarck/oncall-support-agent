@@ -9,6 +9,7 @@ import com.stablebridge.oncall.domain.model.deploy.DeploySnapshot;
 import com.stablebridge.oncall.domain.model.deploy.MetricChange;
 import com.stablebridge.oncall.domain.model.deploy.NewErrorSummary;
 import com.stablebridge.oncall.domain.model.deploy.RollbackHistory;
+import com.stablebridge.oncall.domain.model.deploy.RollbackResult;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -60,6 +61,26 @@ public final class DeployFixtures {
     public static NewErrorSummary aNewErrorSummary() {
         return new NewErrorSummary(
                 "NullPointerException", 42, Instant.parse("2026-03-10T09:45:00Z"));
+    }
+
+    public static RollbackResult aRollbackResult() {
+        return new RollbackResult(
+                TestConstants.SERVICE_NAME,
+                true,
+                TestConstants.DEPLOY_ID,
+                TestConstants.TARGET_REVISION,
+                Instant.parse("2026-03-10T10:00:00Z"),
+                "Rollback to revision " + TestConstants.TARGET_REVISION + " completed successfully");
+    }
+
+    public static RollbackResult aFailedRollbackResult() {
+        return new RollbackResult(
+                TestConstants.SERVICE_NAME,
+                false,
+                TestConstants.DEPLOY_ID,
+                TestConstants.TARGET_REVISION,
+                Instant.parse("2026-03-10T10:00:00Z"),
+                "Rollback failed: ArgoCD sync error");
     }
 
     public static DeployImpactReport aDeployImpactReport() {

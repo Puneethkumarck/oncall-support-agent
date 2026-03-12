@@ -5,6 +5,8 @@ import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.domain.io.UserInput;
 import com.stablebridge.oncall.agent.deploy.DeployImpactAgent;
 import com.stablebridge.oncall.agent.deploy.DeployImpactAgent.FormattedDeployImpact;
+import com.stablebridge.oncall.agent.deploy.DeployRollbackAgent;
+import com.stablebridge.oncall.agent.deploy.DeployRollbackAgent.FormattedRollbackReport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +22,11 @@ public class DeployController {
 
     private final AgentPlatform agentPlatform;
     private final DeployImpactAgent deployImpactAgent;
+    private final DeployRollbackAgent deployRollbackAgent;
 
     public record DeployImpactRequest(String service, String deployId) {}
+
+    public record RollbackRequest(String service) {}
 
     @PostMapping("/deploy-impact")
     public FormattedDeployImpact analyzeDeployImpact(@RequestBody DeployImpactRequest request) {
@@ -37,5 +42,15 @@ public class DeployController {
 
         var invocation = AgentInvocation.create(agentPlatform, FormattedDeployImpact.class);
         return invocation.invoke(new UserInput(userInputContent), deployImpactAgent);
+    }
+
+    @PostMapping("/rollback")
+    public FormattedRollbackReport executeRollback(@RequestBody RollbackRequest request) {
+        log.info("Received rollback request for service: {}", request.service());
+
+        var invocation =
+                AgentInvocation.create(agentPlatform, FormattedRollbackReport.class);
+        return invocation.invoke(
+                new UserInput(request.service()), deployRollbackAgent);
     }
 }

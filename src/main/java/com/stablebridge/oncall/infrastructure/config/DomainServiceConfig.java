@@ -5,6 +5,7 @@ import com.stablebridge.oncall.domain.service.DeployImpactReportFormatter;
 import com.stablebridge.oncall.domain.service.HealthCardFormatter;
 import com.stablebridge.oncall.domain.service.LogAnalysisReportFormatter;
 import com.stablebridge.oncall.domain.service.PostMortemFormatter;
+import com.stablebridge.oncall.domain.service.RollbackReportFormatter;
 import com.stablebridge.oncall.domain.service.SLOReportFormatter;
 import com.stablebridge.oncall.domain.service.TimelineBuilder;
 import com.stablebridge.oncall.domain.service.TraceAnalysisReportFormatter;
@@ -53,6 +54,11 @@ class DomainServiceConfig {
     @Bean
     SLOReportFormatter sloReportFormatter() {
         return new SLOReportFormatter();
+    }
+
+    @Bean
+    RollbackReportFormatter rollbackReportFormatter() {
+        return new RollbackReportFormatter();
     }
 
     @Bean

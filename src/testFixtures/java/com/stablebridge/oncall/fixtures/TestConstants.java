@@ -11,6 +11,7 @@ public final class TestConstants {
     public static final String DASHBOARD_UID = "dashboard-001";
     public static final String SLO_NAME = "availability-99.9";
     public static final String SLACK_CHANNEL = "#incidents";
+    public static final String TARGET_REVISION = "deploy-prev-789";
 
     private TestConstants() {}
 }

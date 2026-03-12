@@ -10,6 +10,7 @@ import com.stablebridge.oncall.domain.model.common.Trend;
 import com.stablebridge.oncall.domain.model.deploy.DeployDetail;
 import com.stablebridge.oncall.domain.model.deploy.DeploySnapshot;
 import com.stablebridge.oncall.domain.model.deploy.RollbackHistory;
+import com.stablebridge.oncall.domain.model.deploy.RollbackResult;
 import com.stablebridge.oncall.domain.model.health.DependencyStatus;
 import com.stablebridge.oncall.domain.model.logs.LogCluster;
 import com.stablebridge.oncall.domain.model.metrics.MetricsSnapshot;
@@ -19,6 +20,7 @@ import com.stablebridge.oncall.domain.model.postmortem.TimelineEntry;
 import com.stablebridge.oncall.domain.model.slo.BurnContributor;
 import com.stablebridge.oncall.domain.model.trace.CallChainStep;
 import com.stablebridge.oncall.domain.port.argocd.DeployHistoryProvider;
+import com.stablebridge.oncall.domain.port.argocd.DeployRollbackProvider;
 import com.stablebridge.oncall.domain.port.grafana.DashboardProvider;
 import com.stablebridge.oncall.domain.port.loki.LogSearchProvider;
 import com.stablebridge.oncall.domain.port.notification.SlackNotifier;
@@ -295,6 +297,22 @@ class MockAdaptersConfig {
                     String appName, Instant from, Instant to) {
                 return List.of(fetchLatestDeploy(appName));
             }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    DeployRollbackProvider mockDeployRollbackProvider() {
+        log.warn("Using mock DeployRollbackProvider — no live ArgoCD configured");
+        return (appName, targetRevision) -> {
+            log.info("Mock: would rollback {} to revision {}", appName, targetRevision);
+            return new RollbackResult(
+                    appName,
+                    true,
+                    "deploy-abc123",
+                    targetRevision,
+                    Instant.now(),
+                    "Mock rollback to revision " + targetRevision + " completed");
         };
     }
 
