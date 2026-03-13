@@ -1,5 +1,20 @@
 # On-Call Support Agent
 
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=flat&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.3-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring AI](https://img.shields.io/badge/Spring%20AI-Ollama-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-ai)
+[![Embabel](https://img.shields.io/badge/Embabel%20GOAP-0.3.4-blue?style=flat)](https://github.com/embabel/embabel-agent)
+[![Gradle](https://img.shields.io/badge/Gradle-9.3.1-02303A?style=flat&logo=gradle&logoColor=white)](https://gradle.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat)](LICENSE)
+
+[![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&logoColor=white)](https://prometheus.io/)
+[![Grafana Loki](https://img.shields.io/badge/Loki-F46800?style=flat&logo=grafana&logoColor=white)](https://grafana.com/oss/loki/)
+[![Grafana Tempo](https://img.shields.io/badge/Tempo-F46800?style=flat&logo=grafana&logoColor=white)](https://grafana.com/oss/tempo/)
+[![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&logoColor=white)](https://grafana.com/)
+[![ArgoCD](https://img.shields.io/badge/ArgoCD-EF7B4D?style=flat&logo=argo&logoColor=white)](https://argoproj.github.io/cd/)
+[![PagerDuty](https://img.shields.io/badge/PagerDuty-06AC38?style=flat&logo=pagerduty&logoColor=white)](https://www.pagerduty.com/)
+[![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white)](https://slack.com/)
+
 AI-powered GOAP agent that automates incident triage, root cause analysis, and guided remediation across an enterprise Java/Spring stack. Integrates with Prometheus, Loki, Tempo, Grafana, PagerDuty, ArgoCD, and Slack to reduce MTTR and on-call toil.
 
 ## Architecture
