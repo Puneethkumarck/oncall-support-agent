@@ -1,0 +1,70 @@
+embabel:
+  models:
+    default-llm: claude-haiku-4-5:latest
+  agent:
+    platform:
+      llm-operations:
+        prompts:
+          default-timeout: 300s
+
+spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11435
+      init:
+        timeout: 300s
+        pull-model-strategy: never
+      connection:
+        read-timeout: 300s
+      chat:
+        options:
+          model: claude-haiku-4-5
+          num-predict: 4096
+  reactor:
+    netty:
+      read-timeout: 300s
+  http:
+    client:
+      connect-timeout: 30s
+      read-timeout: 300s
+
+logging:
+  level:
+    com.embabel: DEBUG
+    com.stablebridge.oncall: DEBUG
+    org.springframework.ai: DEBUG
+  file:
+    name: oncall-support-agent.log
+
+app:
+  services:
+    prometheus:
+      base-url: http://localhost:9090
+      enabled: true
+    loki:
+      base-url: http://localhost:3100
+      enabled: true
+    tempo:
+      base-url: http://localhost:3200
+      enabled: true
+    grafana:
+      base-url: http://localhost:3000
+      api-key: ${GRAFANA_API_KEY:}
+      enabled: true
+    argocd:
+      base-url: ${ARGOCD_URL:http://localhost:30080}
+      auth-token: ${ARGOCD_AUTH_TOKEN:}
+      enabled: true
+      app-mapping:
+        alert-api: price-alert
+        evaluator: price-alert
+        tick-ingestor: price-alert
+        notification-persister: price-alert
+        market-feed-simulator: price-alert
+    pagerduty:
+      base-url: https://api.eu.pagerduty.com
+      api-key: ${PAGERDUTY_API_KEY:}
+      enabled: true
+    slack:
+      webhook-url: ${SLACK_WEBHOOK_URL:}
+      enabled: true

@@ -1,9 +1,11 @@
 package com.stablebridge.oncall.domain.model.postmortem;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.stablebridge.oncall.domain.model.common.IncidentSeverity;
 
 import java.util.List;
 
+@JsonDeserialize(using = PostMortemDraftDeserializer.class)
 public record PostMortemDraft(
         String title,
         IncidentSeverity severity,

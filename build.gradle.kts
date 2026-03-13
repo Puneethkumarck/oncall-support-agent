@@ -75,7 +75,7 @@ dependencies {
     implementation("com.embabel.agent:embabel-agent-starter:$embabelVersion")
     implementation("com.embabel.agent:embabel-agent-starter-shell:$embabelVersion")
 
-    // LLM provider for Embabel GOAP agent (Ollama — local, free)
+    // LLM provider for Embabel GOAP agent (Ollama — routed to Anthropic via LiteLLM proxy)
     implementation("com.embabel.agent:embabel-agent-starter-ollama:$embabelVersion")
 
     // Spring Boot

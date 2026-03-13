@@ -6,6 +6,7 @@ import com.stablebridge.oncall.domain.model.deploy.DeployDetail;
 import com.stablebridge.oncall.domain.model.deploy.DeploySnapshot;
 import com.stablebridge.oncall.domain.model.deploy.RollbackHistory;
 import com.stablebridge.oncall.domain.port.argocd.DeployHistoryProvider;
+import com.stablebridge.oncall.infrastructure.config.ServiceProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,55 +31,87 @@ import java.util.List;
 class ArgoCDAdapter implements DeployHistoryProvider {
 
     private final WebClient argocdWebClient;
+    private final ServiceProperties serviceProperties;
+
+    private String resolveAppName(String serviceName) {
+        String resolved = serviceProperties.argocd().resolveAppName(serviceName);
+        if (!resolved.equals(serviceName)) {
+            log.info("Resolved service '{}' to ArgoCD app '{}'", serviceName, resolved);
+        }
+        return resolved;
+    }
 
     @Override
     public DeploySnapshot fetchLatestDeploy(String appName) {
-        log.info("Fetching latest deploy from ArgoCD for appName={}", appName);
-
-        JsonNode json = fetchApplication(appName);
-        return parseDeploySnapshot(json);
+        String resolved = resolveAppName(appName);
+        log.info("Fetching latest deploy from ArgoCD for appName={} (resolved={})", appName, resolved);
+        try {
+            JsonNode json = fetchApplication(resolved);
+            return parseDeploySnapshot(json);
+        } catch (ResourceNotFoundException e) {
+            log.warn("ArgoCD app '{}' not found, returning empty deploy snapshot", appName);
+            return new DeploySnapshot(appName, "unknown", "unknown", "unknown",
+                    Instant.now(), "Unknown", "Unknown", Duration.ZERO, List.of());
+        }
     }
 
     @Override
     public DeployDetail fetchDeployDetail(String appName, String revision) {
+        String resolved = resolveAppName(appName);
         log.info(
-                "Fetching deploy detail from ArgoCD for appName={} revision={}",
+                "Fetching deploy detail from ArgoCD for appName={} (resolved={}) revision={}",
                 appName,
+                resolved,
                 revision);
+        try {
+            JsonNode metadata = fetchRevisionMetadata(resolved, revision);
+            JsonNode appJson = fetchApplication(resolved);
 
-        JsonNode metadata = fetchRevisionMetadata(appName, revision);
-        JsonNode appJson = fetchApplication(appName);
+            String author = metadata.has("author") ? metadata.get("author").asText() : "unknown";
+            String message = metadata.has("message") ? metadata.get("message").asText() : "";
+            Instant deployedAt = metadata.has("date")
+                    ? Instant.parse(metadata.get("date").asText())
+                    : Instant.now();
 
-        String author = metadata.has("author") ? metadata.get("author").asText() : "unknown";
-        String message = metadata.has("message") ? metadata.get("message").asText() : "";
-        Instant deployedAt = metadata.has("date")
-                ? Instant.parse(metadata.get("date").asText())
-                : Instant.now();
+            String previousRevision = findPreviousRevision(appJson, revision);
 
-        String previousRevision = findPreviousRevision(appJson, revision);
-
-        return new DeployDetail(
-                revision, revision, author, message, "", List.of(), deployedAt, previousRevision);
+            return new DeployDetail(
+                    revision, revision, author, message, "", List.of(), deployedAt, previousRevision);
+        } catch (ResourceNotFoundException e) {
+            log.warn("ArgoCD app '{}' not found, returning empty deploy detail", appName);
+            return new DeployDetail(revision, revision, "unknown", "", "", List.of(), Instant.now(), "");
+        }
     }
 
     @Override
     public RollbackHistory fetchRollbackHistory(String appName) {
-        log.info("Fetching rollback history from ArgoCD for appName={}", appName);
-
-        JsonNode json = fetchApplication(appName);
-        return parseRollbackHistory(json);
+        String resolved = resolveAppName(appName);
+        log.info("Fetching rollback history from ArgoCD for appName={} (resolved={})", appName, resolved);
+        try {
+            JsonNode json = fetchApplication(resolved);
+            return parseRollbackHistory(json);
+        } catch (ResourceNotFoundException e) {
+            log.warn("ArgoCD app '{}' not found, returning empty rollback history", appName);
+            return new RollbackHistory(List.of(), false, "", "");
+        }
     }
 
     @Override
     public List<DeploySnapshot> fetchDeploysInWindow(String appName, Instant from, Instant to) {
+        String resolved = resolveAppName(appName);
         log.info(
-                "Fetching deploys in window from ArgoCD for appName={} from={} to={}",
+                "Fetching deploys in window from ArgoCD for appName={} (resolved={}) from={} to={}",
                 appName,
+                resolved,
                 from,
                 to);
-
-        JsonNode json = fetchApplication(appName);
-        return parseDeploysInWindow(json, appName, from, to);
+        try {
+            JsonNode json = fetchApplication(resolved);
+            return parseDeploysInWindow(json, appName, from, to);
+        } catch (ResourceNotFoundException e) {
+            log.warn("ArgoCD app '{}' not found, returning empty deploy list", appName);
+            return List.of();
+        }
     }
 
     private JsonNode fetchApplication(String appName) {

@@ -101,6 +101,10 @@ class PagerDutyAlertAdapter implements AlertProvider, AlertDatasetProvider {
 
     private JsonNode fetchIncidents(String team, Instant from, Instant to, String status) {
         try {
+            // Support both team IDs and service IDs (service IDs start with P and are uppercase)
+            boolean isServiceId = team != null && team.matches("^P[A-Z0-9]+$");
+            String paramName = isServiceId ? "service_ids[]" : "team_ids[]";
+
             return pagerdutyWebClient
                     .get()
                     .uri(
@@ -108,7 +112,7 @@ class PagerDutyAlertAdapter implements AlertProvider, AlertDatasetProvider {
                                 var builder =
                                         uriBuilder
                                                 .path("/incidents")
-                                                .queryParam("team_ids[]", "{team}")
+                                                .queryParam(paramName, "{team}")
                                                 .queryParam("since", "{since}")
                                                 .queryParam("until", "{until}");
                                 if (status != null) {

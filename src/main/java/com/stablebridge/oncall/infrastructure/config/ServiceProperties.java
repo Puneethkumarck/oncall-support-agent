@@ -16,7 +16,14 @@ public record ServiceProperties(
 
     public record GrafanaEndpoint(String baseUrl, String apiKey) {}
 
-    public record ArgoCDEndpoint(String baseUrl, String authToken) {}
+    public record ArgoCDEndpoint(String baseUrl, String authToken, java.util.Map<String, String> appMapping) {
+        public String resolveAppName(String serviceName) {
+            if (appMapping != null && appMapping.containsKey(serviceName)) {
+                return appMapping.get(serviceName);
+            }
+            return serviceName;
+        }
+    }
 
     public record PagerDutyEndpoint(String baseUrl, String apiKey) {}
 

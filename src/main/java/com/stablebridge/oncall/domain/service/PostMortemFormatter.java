@@ -12,14 +12,19 @@ public class PostMortemFormatter {
         sb.append("**Severity:** ").append(draft.severity()).append("\n\n");
 
         sb.append("## Impact\n");
-        sb.append("- **Duration:** ").append(draft.impact().duration()).append("\n");
-        sb.append("- **Affected Users:** ").append(draft.impact().affectedUsers()).append("\n");
-        sb.append("- **Affected Services:** ")
-            .append(String.join(", ", draft.impact().affectedServices()))
-            .append("\n\n");
+        if (draft.impact() != null) {
+            sb.append("- **Duration:** ").append(draft.impact().duration()).append("\n");
+            sb.append("- **Affected Users:** ").append(draft.impact().affectedUsers()).append("\n");
+            var affectedServices = draft.impact().affectedServices() != null ? draft.impact().affectedServices() : java.util.List.<String>of();
+            sb.append("- **Affected Services:** ")
+                .append(String.join(", ", affectedServices))
+                .append("\n\n");
+        } else {
+            sb.append("No impact data available.\n\n");
+        }
 
         sb.append("## Timeline\n");
-        for (TimelineEntry entry : draft.timeline()) {
+        for (TimelineEntry entry : draft.timeline() != null ? draft.timeline() : java.util.List.<TimelineEntry>of()) {
             sb.append("- **")
                 .append(entry.timestamp())
                 .append("** ")
@@ -33,28 +38,29 @@ public class PostMortemFormatter {
         sb.append("## Root Cause\n");
         sb.append(draft.rootCause()).append("\n\n");
 
-        if (!draft.contributingFactors().isEmpty()) {
+        var contributingFactors = draft.contributingFactors() != null ? draft.contributingFactors() : java.util.List.<String>of();
+        if (!contributingFactors.isEmpty()) {
             sb.append("## Contributing Factors\n");
-            for (String factor : draft.contributingFactors()) {
+            for (String factor : contributingFactors) {
                 sb.append("- ").append(factor).append("\n");
             }
             sb.append("\n");
         }
 
         sb.append("## What Went Well\n");
-        for (String item : draft.whatWentWell()) {
+        for (String item : draft.whatWentWell() != null ? draft.whatWentWell() : java.util.List.<String>of()) {
             sb.append("- ").append(item).append("\n");
         }
         sb.append("\n");
 
         sb.append("## What Went Poorly\n");
-        for (String item : draft.whatWentPoorly()) {
+        for (String item : draft.whatWentPoorly() != null ? draft.whatWentPoorly() : java.util.List.<String>of()) {
             sb.append("- ").append(item).append("\n");
         }
         sb.append("\n");
 
         sb.append("## Action Items\n");
-        for (ActionItem item : draft.actionItems()) {
+        for (ActionItem item : draft.actionItems() != null ? draft.actionItems() : java.util.List.<ActionItem>of()) {
             sb.append("- [")
                 .append(item.priority())
                 .append("] ")
@@ -67,9 +73,10 @@ public class PostMortemFormatter {
         }
         sb.append("\n");
 
-        if (!draft.lessonsLearned().isEmpty()) {
+        var lessonsLearned = draft.lessonsLearned() != null ? draft.lessonsLearned() : java.util.List.<String>of();
+        if (!lessonsLearned.isEmpty()) {
             sb.append("## Lessons Learned\n");
-            for (String lesson : draft.lessonsLearned()) {
+            for (String lesson : lessonsLearned) {
                 sb.append("- ").append(lesson).append("\n");
             }
             sb.append("\n");

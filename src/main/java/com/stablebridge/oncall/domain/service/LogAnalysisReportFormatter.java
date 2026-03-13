@@ -10,11 +10,12 @@ public class LogAnalysisReportFormatter {
         var sb = new StringBuilder();
         sb.append("# Log Analysis: ").append(service).append("\n\n");
 
-        sb.append("## Error Clusters (").append(report.clusters().size()).append(")\n");
-        if (report.clusters().isEmpty()) {
+        var clusters = report.clusters() != null ? report.clusters() : java.util.List.<LogCluster>of();
+        sb.append("## Error Clusters (").append(clusters.size()).append(")\n");
+        if (clusters.isEmpty()) {
             sb.append("No error clusters found.\n");
         } else {
-            for (LogCluster cluster : report.clusters()) {
+            for (LogCluster cluster : clusters) {
                 sb.append("- **")
                         .append(cluster.exceptionType())
                         .append("** (`")
@@ -30,11 +31,12 @@ public class LogAnalysisReportFormatter {
         }
         sb.append("\n");
 
-        sb.append("## New Patterns (").append(report.newPatterns().size()).append(")\n");
-        if (report.newPatterns().isEmpty()) {
+        var patterns = report.newPatterns() != null ? report.newPatterns() : java.util.List.<NewPattern>of();
+        sb.append("## New Patterns (").append(patterns.size()).append(")\n");
+        if (patterns.isEmpty()) {
             sb.append("No new patterns detected.\n");
         } else {
-            for (NewPattern pattern : report.newPatterns()) {
+            for (NewPattern pattern : patterns) {
                 sb.append("- **")
                         .append(pattern.pattern())
                         .append("** (confidence: ")
@@ -59,7 +61,7 @@ public class LogAnalysisReportFormatter {
         sb.append("\n");
 
         sb.append("## Recommendation\n");
-        sb.append(report.recommendation()).append("\n");
+        sb.append(report.recommendation() != null ? report.recommendation() : "No recommendation available.").append("\n");
 
         return sb.toString();
     }

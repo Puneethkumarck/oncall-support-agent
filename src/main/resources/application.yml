@@ -35,7 +35,7 @@ spring:
       enabled: true
 embabel:
   models:
-    default-llm: llama3.2:latest
+    default-llm: claude-haiku-4-5:latest
   agent:
     shell:
       web-application-type: reactive

@@ -23,13 +23,14 @@ public class DeployImpactReportFormatter {
                 .append(report.rollbackRecommendation())
                 .append("\n\n");
 
+        var metricChanges = report.evidence() != null ? report.evidence() : java.util.List.<MetricChange>of();
         sb.append("## Metric Changes (")
-                .append(report.evidence().size())
+                .append(metricChanges.size())
                 .append(")\n");
-        if (report.evidence().isEmpty()) {
+        if (metricChanges.isEmpty()) {
             sb.append("No significant metric changes detected.\n");
         } else {
-            for (MetricChange change : report.evidence()) {
+            for (MetricChange change : metricChanges) {
                 sb.append("- **")
                         .append(change.metric())
                         .append(":** ")
@@ -43,13 +44,14 @@ public class DeployImpactReportFormatter {
         }
         sb.append("\n");
 
+        var newErrors = report.newErrors() != null ? report.newErrors() : java.util.List.<NewErrorSummary>of();
         sb.append("## New Errors (")
-                .append(report.newErrors().size())
+                .append(newErrors.size())
                 .append(")\n");
-        if (report.newErrors().isEmpty()) {
+        if (newErrors.isEmpty()) {
             sb.append("No new errors detected after deployment.\n");
         } else {
-            for (NewErrorSummary error : report.newErrors()) {
+            for (NewErrorSummary error : newErrors) {
                 sb.append("- **")
                         .append(error.exceptionType())
                         .append(":** ")

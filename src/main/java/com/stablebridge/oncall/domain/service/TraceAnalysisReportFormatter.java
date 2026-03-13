@@ -11,11 +11,12 @@ public class TraceAnalysisReportFormatter {
         var sb = new StringBuilder();
         sb.append("# Trace Analysis: ").append(service).append("\n\n");
 
-        sb.append("## Call Chain (").append(report.callChain().size()).append(" steps)\n");
-        if (report.callChain().isEmpty()) {
+        var callChain = report.callChain() != null ? report.callChain() : java.util.List.<CallChainStep>of();
+        sb.append("## Call Chain (").append(callChain.size()).append(" steps)\n");
+        if (callChain.isEmpty()) {
             sb.append("No call chain steps found.\n");
         } else {
-            for (CallChainStep step : report.callChain()) {
+            for (CallChainStep step : callChain) {
                 sb.append("- **")
                         .append(step.service())
                         .append("** `")
@@ -49,13 +50,14 @@ public class TraceAnalysisReportFormatter {
         }
         sb.append("\n");
 
+        var cascadeImpact = report.cascadeImpact() != null ? report.cascadeImpact() : java.util.List.<CascadeImpact>of();
         sb.append("## Cascade Impact (")
-                .append(report.cascadeImpact().size())
+                .append(cascadeImpact.size())
                 .append(")\n");
-        if (report.cascadeImpact().isEmpty()) {
+        if (cascadeImpact.isEmpty()) {
             sb.append("No cascade impact detected.\n");
         } else {
-            for (CascadeImpact impact : report.cascadeImpact()) {
+            for (CascadeImpact impact : cascadeImpact) {
                 sb.append("- **")
                         .append(impact.affectedService())
                         .append(":** ")
@@ -68,7 +70,7 @@ public class TraceAnalysisReportFormatter {
         sb.append("\n");
 
         sb.append("## Recommendation\n");
-        sb.append(report.recommendation()).append("\n");
+        sb.append(report.recommendation() != null ? report.recommendation() : "No recommendation available.").append("\n");
 
         return sb.toString();
     }

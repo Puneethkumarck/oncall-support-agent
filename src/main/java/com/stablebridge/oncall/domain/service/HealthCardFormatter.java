@@ -16,7 +16,10 @@ public class HealthCardFormatter {
             .append("]\n\n");
 
         sb.append("## SLI Summary\n");
-        for (SLISnapshot sli : report.sliCards()) {
+        if (report.sliCards() == null || report.sliCards().isEmpty()) {
+            sb.append("No SLI data available.\n");
+        }
+        for (SLISnapshot sli : report.sliCards() != null ? report.sliCards() : java.util.List.<SLISnapshot>of()) {
             sb.append("- **")
                 .append(sli.name())
                 .append(":** ")
@@ -70,7 +73,7 @@ public class HealthCardFormatter {
         }
 
         sb.append("## Recommendation\n");
-        sb.append(report.recommendation()).append("\n");
+        sb.append(report.recommendation() != null ? report.recommendation() : "No recommendation available.").append("\n");
 
         return sb.toString();
     }

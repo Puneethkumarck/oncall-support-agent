@@ -41,19 +41,30 @@ class PagerDutyHistoryAdapter implements AlertHistoryProvider, IncidentTimelineP
                 from,
                 to);
 
+        // If service is not a valid PagerDuty service ID, return empty history
+        boolean isServiceId = service != null && service.matches("^P[A-Z0-9]+$");
+        if (!isServiceId) {
+            log.warn("Service '{}' is not a PagerDuty service ID, fetching all incidents instead", service);
+        }
+
         JsonNode json;
         try {
             json =
                     pagerdutyWebClient
                             .get()
                             .uri(
-                                    uriBuilder ->
-                                            uriBuilder
-                                                    .path("/incidents")
-                                                    .queryParam("service_ids[]", "{service}")
-                                                    .queryParam("since", "{since}")
-                                                    .queryParam("until", "{until}")
-                                                    .build(service, from.toString(), to.toString()))
+                                    uriBuilder -> {
+                                        var builder = uriBuilder.path("/incidents");
+                                        if (isServiceId) {
+                                            builder.queryParam("service_ids[]", "{service}");
+                                        }
+                                        builder.queryParam("since", "{since}")
+                                               .queryParam("until", "{until}");
+                                        if (isServiceId) {
+                                            return builder.build(service, from.toString(), to.toString());
+                                        }
+                                        return builder.build(from.toString(), to.toString());
+                                    })
                             .retrieve()
                             .onStatus(
                                     HttpStatusCode::is4xxClientError,
@@ -71,10 +82,13 @@ class PagerDutyHistoryAdapter implements AlertHistoryProvider, IncidentTimelineP
                                     })
                             .bodyToMono(JsonNode.class)
                             .block();
+        } catch (ResourceNotFoundException e) {
+            log.warn("PagerDuty alert history not found for '{}', returning empty", service);
+            return new AlertHistorySnapshot(service, 0, List.of(), false, null);
         } catch (WebClientResponseException e) {
             if (e.getStatusCode().is4xxClientError()) {
-                throw new ResourceNotFoundException(
-                        "PagerDuty incidents not found for service: " + service);
+                log.warn("PagerDuty returned {} for '{}', returning empty history", e.getStatusCode(), service);
+                return new AlertHistorySnapshot(service, 0, List.of(), false, null);
             }
             throw new ServiceUnavailableException(
                     "PagerDuty service error: HTTP " + e.getStatusCode().value());

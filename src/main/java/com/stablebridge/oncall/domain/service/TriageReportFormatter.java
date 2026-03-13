@@ -22,8 +22,9 @@ public class TriageReportFormatter {
             .append("\n\n");
 
         sb.append("## Evidence\n");
-        for (String evidence : report.assessment().evidence()) {
-            sb.append("- ").append(evidence).append("\n");
+        var evidence = report.assessment().evidence() != null ? report.assessment().evidence() : java.util.List.<String>of();
+        for (String ev : evidence) {
+            sb.append("- ").append(ev).append("\n");
         }
         sb.append("\n");
 
