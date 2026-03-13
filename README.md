@@ -4,38 +4,7 @@ AI-powered GOAP agent that automates incident triage, root cause analysis, and g
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                         Embabel GOAP Engine                         │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌──────────────────┐  │
-│  │  Triage    │ │   Health   │ │    SLO     │ │  Deploy Impact   │  │
-│  │  Agent     │ │   Agent    │ │   Agent    │ │     Agent        │  │
-│  └─────┬──────┘ └─────┬──────┘ └─────┬──────┘ └───────┬──────────┘  │
-│  ┌─────┴──────┐ ┌─────┴──────┐ ┌─────┴──────┐ ┌───────┴──────────┐  │
-│  │    Log     │ │   Trace    │ │  Fatigue   │ │   Post-Mortem    │  │
-│  │  Analyst   │ │   Agent    │ │   Agent    │ │     Agent        │  │
-│  └────────────┘ └────────────┘ └────────────┘ └──────────────────┘  │
-└───────────────────────────┬──────────────────────────────────────────┘
-                            │
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-    ┌──────────────┐ ┌───────────┐ ┌───────────────┐
-    │   Domain     │ │   Ports   │ │   Adapters    │
-    │   Models     │ │ (12 intf) │ │ (15 impls)    │
-    │ (45 records) │ │           │ │               │
-    └──────────────┘ └─────┬─────┘ └───────┬───────┘
-                           │               │
-          ┌────────────────┼───────────────┼────────────────┐
-          ▼                ▼               ▼                ▼
-    ┌───────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐
-    │Prometheus │  │    Loki    │  │   Tempo    │  │  PagerDuty │
-    │  Metrics  │  │    Logs    │  │   Traces   │  │   Alerts   │
-    └───────────┘  └────────────┘  └────────────┘  └────────────┘
-    ┌───────────┐  ┌────────────┐  ┌────────────┐
-    │  ArgoCD   │  │  Grafana   │  │   Slack    │
-    │  Deploys  │  │ Dashboards │  │   Notify   │
-    └───────────┘  └────────────┘  └────────────┘
-```
+![Architecture](architecture.png)
 
 **Hexagonal architecture** enforced by ArchUnit — domain has zero dependencies on infrastructure, agents, or frameworks.
 
