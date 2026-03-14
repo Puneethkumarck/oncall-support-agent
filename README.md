@@ -19,9 +19,89 @@ AI-powered GOAP agent that automates incident triage, root cause analysis, and g
 
 ## Architecture
 
-![Architecture](architecture.png)
-
 **Hexagonal architecture** enforced by ArchUnit — domain has zero dependencies on infrastructure, agents, or frameworks.
+
+```mermaid
+graph LR
+    subgraph IN[" Entrypoints"]
+        REST[REST API]
+        WH[Webhook]
+        CLI[Shell CLI]
+    end
+
+    subgraph AGENTS[" GOAP Agents"]
+        direction TB
+        TRIAGE[Triage]
+        LOGS[Logs]
+        DEPLOY[Deploy]
+        HEALTH[Health]
+        TRACE[Trace]
+        FATIGUE[Fatigue]
+        PM[PostMortem]
+        SLO[SLO]
+        ROLLBACK[Rollback]
+    end
+
+    subgraph LLM_BOX[" LLM"]
+        LLM[Claude Haiku 4.5]
+    end
+
+    subgraph DOMAIN[" Domain"]
+        PORTS[Ports]
+        MODELS[Models]
+        FMT[Formatters]
+    end
+
+    subgraph INFRA[" Adapters"]
+        direction TB
+        PA[Prometheus]
+        LA[Loki]
+        TA[Tempo]
+        GA[Grafana]
+        AA[ArgoCD]
+        PDA[PagerDuty]
+        SA[Slack]
+    end
+
+    IN --> AGENTS
+    AGENTS --> LLM_BOX
+    AGENTS --> DOMAIN
+    DOMAIN --> INFRA
+
+    style IN fill:#1a1a2e,stroke:#16213e,color:#e0e0e0
+    style AGENTS fill:#16213e,stroke:#0f3460,color:#e0e0e0
+    style LLM_BOX fill:#533483,stroke:#0f3460,color:#e0e0e0
+    style DOMAIN fill:#0f3460,stroke:#1a1a2e,color:#e0e0e0
+    style INFRA fill:#1b4332,stroke:#2d6a4f,color:#e0e0e0
+
+    style REST fill:#e94560,stroke:#1a1a2e,color:#fff
+    style WH fill:#e94560,stroke:#1a1a2e,color:#fff
+    style CLI fill:#e94560,stroke:#1a1a2e,color:#fff
+
+    style TRIAGE fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style LOGS fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style DEPLOY fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style HEALTH fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style TRACE fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style FATIGUE fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style PM fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style SLO fill:#4361ee,stroke:#3a0ca3,color:#fff
+    style ROLLBACK fill:#4361ee,stroke:#3a0ca3,color:#fff
+
+    style LLM fill:#7b2cbf,stroke:#5a189a,color:#fff
+
+    style PORTS fill:#219ebc,stroke:#023047,color:#fff
+    style MODELS fill:#219ebc,stroke:#023047,color:#fff
+    style FMT fill:#219ebc,stroke:#023047,color:#fff
+
+    style PA fill:#2d6a4f,stroke:#1b4332,color:#fff
+    style LA fill:#2d6a4f,stroke:#1b4332,color:#fff
+    style TA fill:#2d6a4f,stroke:#1b4332,color:#fff
+    style GA fill:#2d6a4f,stroke:#1b4332,color:#fff
+    style AA fill:#2d6a4f,stroke:#1b4332,color:#fff
+    style PDA fill:#2d6a4f,stroke:#1b4332,color:#fff
+    style SA fill:#2d6a4f,stroke:#1b4332,color:#fff
+```
 
 ## Tech Stack
 
@@ -404,20 +484,17 @@ Enforced by ArchUnit — these are compile-time validated:
 5. **Notification isolation** — notification adapters must not depend on domain services
 6. **Agent boundaries** — agents must not directly call notification ports
 
-## Build
+## Make Targets
 
 ```bash
-# Full build with all checks
-./gradlew check
-
-# Format code
-./gradlew spotlessApply
-
-# Build without tests
-./gradlew build -x test
-
-# Run application
-./gradlew bootRun
+make help              # Show all available targets
+make test              # Run unit tests
+make integration-test  # Run integration tests (real services)
+make check             # Run all tests and checks
+make format            # Fix code formatting (Spotless)
+make clean             # Clean build artifacts
+make run               # Run with mock adapters
+make run-live          # Run against live price-alert stack
 ```
 
 ## License
